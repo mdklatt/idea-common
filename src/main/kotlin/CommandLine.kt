@@ -11,42 +11,11 @@ import java.nio.CharBuffer
 /**
  * Execute an external process via the command line.
  *
- * To protect potentially sensitive data, data passed to the external process
- * via STDIN is placed into a byte array that is immediately cleared upon
- * execution.
- *
- *
+ * To protect potentially sensitive data, input data can be passed to the
+ * external command via an in-memory buffer that is cleared when the command
+ * is executed.
  */
 class CommandLine() : GeneralCommandLine() {
-
-    companion object {
-        /**
-         * Join command line arguments using shell syntax.
-         *
-         * Arguments containing whitespace are quoted, and quote literals are
-         * escaped with a backslash. This matches the behavior of the
-         * {@link import com.intellij.ui.RawCommandLineEditor} class.
-         *
-         */
-        fun join(argv: List<String>) = ParametersListUtil.join(argv)
-
-        /**
-         * Split command line arguments using shell syntax.
-         *
-         * Arguments are split on whitespace. Quoted whitespace is preserved.
-         * A literal quote character must be escaped with a backslash. This
-         * matches the behavior of the
-         * {@link import com.intellij.ui.RawCommandLineEditor} class.
-         *
-         * Note that this does *not* work for `--flag=value` style options;
-         * these should be specified as `--flag value` instead, where `value`
-         * is quoted if it contains spaces.
-         *
-         * @param command: command to split
-         * @return: sequence of arguments
-         */
-        fun split(command: String): List<String> = ParametersListUtil.parse(command)
-    }
 
     private var inputBuffer: ByteArray? = null
 
@@ -67,7 +36,7 @@ class CommandLine() : GeneralCommandLine() {
     }
 
     /**
-     * Send input to the external command via STDIN
+     * Send input to the external command via STDIN.
      *
      * The input buffer is cleared after the command is executed, so this must
      * be called prior to each invocation.
@@ -104,18 +73,43 @@ class CommandLine() : GeneralCommandLine() {
      * @return external process
      */
     override fun createProcess(): Process {
-        // Override the base class to write to STDIN.
         val process = super.createProcess()
-        if (inputBuffer != null) {
-            process.apply {
-                // The Process instance's output stream is actually STDIN from
-                // the external command's point of view.
-                outputStream.write(inputBuffer!!)
-                outputStream.close()
-            }
-            inputBuffer!!.fill(0)  // clear any sensitive data from memory
-            inputBuffer = null
+        inputBuffer?.let { buffer ->
+            // Process.outputStream is STDIN for the external command.
+            process.outputStream.write(inputBuffer)
+            process.outputStream.close()
+            buffer.fill(0)  // clear any sensitive data from memory
         }
+        inputBuffer = null
         return process
+    }
+
+    companion object {
+        /**
+         * Join command line arguments using shell syntax.
+         *
+         * Arguments containing whitespace are quoted, and quote literals are
+         * escaped with a backslash. This matches the behavior of the
+         * {@link import com.intellij.ui.RawCommandLineEditor} class.
+         *
+         */
+        fun join(argv: List<String>) = ParametersListUtil.join(argv)
+
+        /**
+         * Split command line arguments using shell syntax.
+         *
+         * Arguments are split on whitespace. Quoted whitespace is preserved.
+         * A literal quote character must be escaped with a backslash. This
+         * matches the behavior of the
+         * {@link import com.intellij.ui.RawCommandLineEditor} class.
+         *
+         * Note that this does *not* work for `--flag=value` style options;
+         * these should be specified as `--flag value` instead, where `value`
+         * is quoted if it contains spaces.
+         *
+         * @param command: command to split
+         * @return: sequence of arguments
+         */
+        fun split(command: String): List<String> = ParametersListUtil.parse(command)
     }
 }

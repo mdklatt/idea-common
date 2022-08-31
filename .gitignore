@@ -1,0 +1,24 @@
+# Ignore build artifacts.
+
+build/
+
+
+# Ignore Gradle artifacts.
+
+.gradle
+
+
+# Ignore settings for various IDEs.
+
+.idea/
+.project/
+.pydevproject/
+.vscode/
+nbproject/
+*.code-workspace
+
+
+# Ignore OS metadata files.
+
+.DS_Store
+Thumbs.db

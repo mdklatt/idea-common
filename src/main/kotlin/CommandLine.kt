@@ -20,6 +20,34 @@ class CommandLine() : GeneralCommandLine() {
     private var inputBuffer: ByteArray? = null
 
     /**
+     * Append POSIX-style options to the command line.
+     *
+     * Boolean values are treated as a switch and are emitted with no value
+     * (true) or ignored (false). Null-valued options are ignored.
+     *
+     * @param options: mapping of option flags and values
+     */
+    fun addOptions(options: Map<String, Any?> = emptyMap()): CommandLine {
+        fun add(name: String, value: Any?) {
+            if (value == null || value == false) {
+                return  // switch is off, ignore option
+            }
+            addParameter("--$name")
+            if (value !is Boolean) {
+                addParameter(value.toString())  // not a switch, append value
+            }
+        }
+        options.forEach { (name, value) ->
+            if (value is List<*>) {
+                value.forEach { add(name, it) }
+            } else {
+                add(name, value)
+            }
+        }
+        return this
+    }
+
+    /**
      * Send input to the external command via STDIN.
      *
      * The input buffer is cleared after the command is executed, so this must

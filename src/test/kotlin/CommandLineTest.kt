@@ -7,6 +7,7 @@ import dev.mdklatt.idea.util.CommandLine
 import kotlin.io.path.createTempFile
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertSame
 
 
 /**
@@ -18,26 +19,23 @@ internal class CommandLineTest {
         withExePath("cat")
     }
 
-    /**
-     * Test the join() method.
-     */
-    @Test
-    fun testJoin() {
-        assertEquals("", CommandLine.join(emptyList()))
-        val argv = listOf("one", " two  \"three\"")
-        val command = "one \" two  \\\"three\\\"\""
-        assertEquals(command, CommandLine.join(argv))
-    }
 
     /**
-     * Test the split() method.
+     * Test the addOptions() method.
      */
     @Test
-    fun testSplit() {
-        assertEquals(emptyList(), CommandLine.split(""))
-        val command = "one\t\n\r \" two  \\\"three\\\"\""
-        val argv = listOf("one", " two  \"three\"")
-        assertEquals(argv, CommandLine.split(command))
+    fun testAddOptions() {
+        val options = mapOf(
+            "on" to true,
+            "off" to false,
+            "null" to null,
+            "blank" to "",
+            "value" to 1,
+            "list" to listOf('a', 'b'),
+        )
+        assertSame(classUnderTest, classUnderTest.addOptions(options))
+        assertEquals("cat --on --blank \"\" --value 1 --list a --list b",
+            classUnderTest.commandLineString)
     }
 
     /**
@@ -79,5 +77,27 @@ internal class CommandLineTest {
             assertEquals(0, process.waitFor())
             assertEquals("TEST", String(process.inputStream.readBytes()))
         }
+    }
+
+    /**
+     * Test the join() method.
+     */
+    @Test
+    fun testJoin() {
+        assertEquals("", CommandLine.join(emptyList()))
+        val argv = listOf("one", " two  \"three\"")
+        val command = "one \" two  \\\"three\\\"\""
+        assertEquals(command, CommandLine.join(argv))
+    }
+
+    /**
+     * Test the split() method.
+     */
+    @Test
+    fun testSplit() {
+        assertEquals(emptyList(), CommandLine.split(""))
+        val command = "one\t\n\r \" two  \\\"three\\\"\""
+        val argv = listOf("one", " two  \"three\"")
+        assertEquals(argv, CommandLine.split(command))
     }
 }

@@ -15,9 +15,31 @@ import java.nio.CharBuffer
  * external command via an in-memory buffer that is cleared when the command
  * is executed.
  */
-class CommandLine : GeneralCommandLine() {
+class CommandLine() : GeneralCommandLine() {
 
     private var inputBuffer: ByteArray? = null
+
+    /**
+     * Construct an instance with positional arguments and options.
+     *
+     * @param exePath: executable path
+     * @param arguments: positional arguments to pass to executable
+     * @param options: options to pass to executable.
+     */
+    constructor(exePath: String, arguments: Sequence<Any> = emptySequence(),
+                options: Map<String, Any?> = emptyMap()) : this() {
+        withExePath(exePath)
+        addOptions(options)
+        arguments.forEach { addParameter(it.toString()) }
+    }
+
+    /**
+     * Construct an instance from raw parameters.
+     *
+     * @param exePath: executable path
+     * @param parameters: parameters to pass to executable
+     */
+    constructor(exePath: String, vararg parameters: Any) : this(exePath, arguments = parameters.asSequence())
 
     /**
      * Append POSIX-style options to the command line.

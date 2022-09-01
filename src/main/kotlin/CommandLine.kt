@@ -15,7 +15,7 @@ import java.nio.CharBuffer
  * external command via an in-memory buffer that is cleared when the command
  * is executed.
  */
-class CommandLine() : GeneralCommandLine() {
+class PosixCommandLine() : GeneralCommandLine() {
 
     private var inputBuffer: ByteArray? = null
 
@@ -51,8 +51,12 @@ class CommandLine() : GeneralCommandLine() {
      *
      * @param options: mapping of option flags and values
      */
-    fun addOptions(options: Map<String, Any?> = emptyMap()): CommandLine {
+    fun addOptions(options: Map<String, Any?> = emptyMap()): PosixCommandLine {
         fun add(name: String, value: Any?) {
+            // Add parameters for a POSIX long-style option, `--flag [value]`.
+            // This does not support the `--flag=value` option style because
+            // that is not as widely supported
+            // TODO: Support short options, e.g. `-f value`.
             if (value == null || value == false) {
                 return  // switch is off, ignore option
             }
@@ -82,7 +86,7 @@ class CommandLine() : GeneralCommandLine() {
      *
      * @see #withInput(File?)
      */
-    fun withInput(input: String): CommandLine {
+    fun withInput(input: String): PosixCommandLine {
         inputBuffer = input.toByteArray()
         return this
     }
@@ -98,7 +102,7 @@ class CommandLine() : GeneralCommandLine() {
      *
      * @see #withInput(File?)
      */
-    fun withInput(input: CharArray): CommandLine {
+    fun withInput(input: CharArray): PosixCommandLine {
         val bytes = Charsets.UTF_8.encode(CharBuffer.wrap(input))
         inputBuffer = bytes.array()
         return this
@@ -130,7 +134,7 @@ class CommandLine() : GeneralCommandLine() {
             // Process.outputStream is STDIN for the external command.
             process.outputStream.write(inputBuffer)
             process.outputStream.close()
-            buffer.fill(0)  // clear any sensitive data from memory
+            buffer.fill(0)  // clear data from memory
         }
         inputBuffer = null
         return process

@@ -15,7 +15,7 @@ import java.nio.CharBuffer
  * external command via an in-memory buffer that is cleared when the command
  * is executed.
  */
-class CommandLine() : GeneralCommandLine() {
+class CommandLine : GeneralCommandLine() {
 
     private var inputBuffer: ByteArray? = null
 
@@ -23,7 +23,9 @@ class CommandLine() : GeneralCommandLine() {
      * Append POSIX-style options to the command line.
      *
      * Boolean values are treated as a switch and are emitted with no value
-     * (true) or ignored (false). Null-valued options are ignored.
+     * (true) or ignored (false). Sequence<*> values are expanded to emit
+     * the same flag for every value, e.g. `--flag val1 --flag val2 ...`.
+     * Null-valued options are ignored.
      *
      * @param options: mapping of option flags and values
      */
@@ -38,7 +40,7 @@ class CommandLine() : GeneralCommandLine() {
             }
         }
         options.forEach { (name, value) ->
-            if (value is List<*>) {
+            if (value is Sequence<*>) {
                 value.forEach { add(name, it) }
             } else {
                 add(name, value)

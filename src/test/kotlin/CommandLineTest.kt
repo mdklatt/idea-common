@@ -31,7 +31,7 @@ internal class CommandLineTest {
             "null" to null,
             "blank" to "",
             "value" to 1,
-            "list" to listOf('a', 'b'),
+            "list" to listOf('a', 'b').asSequence(),
         )
         assertSame(classUnderTest, classUnderTest.addOptions(options))
         assertEquals("cat --on --blank \"\" --value 1 --list a --list b",

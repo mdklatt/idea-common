@@ -5,6 +5,7 @@ package dev.mdklatt.idea.util.test
 
 import dev.mdklatt.idea.util.CommandLine
 import dev.mdklatt.idea.util.PosixCommandLine
+import dev.mdklatt.idea.util.WindowsCommandLine
 import kotlin.io.path.createTempFile
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -250,6 +251,96 @@ internal class PosixCommandLineTest {
         assertSame(classUnderTest, classUnderTest.withOptions(options))
         assertEquals(
             "cat --on --blank \"\" --value 1 --list a --list b",
+            classUnderTest.commandLineString
+        )
+    }
+}
+
+
+/**
+ * Unit tests for the WinodsCommandLine class.
+ */
+internal class WindowsCommandLineTest {
+
+    private val classUnderTest = WindowsCommandLine("cat")
+    private val options = mapOf(
+        "on" to true,
+        "off" to false,
+        "null" to null,
+        "blank" to "",
+        "value" to 1,
+        "list" to listOf('a', 'b').asSequence(),
+    )
+
+    /**
+     * Test the primary constructor.
+     */
+    @Test
+    fun testPrimaryConstructor() {
+        // Arguably, the intuitive result here would be a blank string, but
+        // this behavior is baked in to the base class. Even more curiously,
+        // GeneralCommandLine("") results in `[""]`, which is also not ideal.
+        assertEquals("<null>", WindowsCommandLine().commandLineString)
+    }
+
+    /**
+     * Test the secondary constructor for structured parameters.
+     */
+    @Test
+    fun testStructuredConstructor() {
+        val arguments = sequenceOf("one", 2)
+        assertEquals(
+            "cat /on /blank: /value:1 /list:a /list:b one 2",
+            WindowsCommandLine("cat", arguments, options).commandLineString
+        )
+    }
+
+    /**
+     * Test the secondary constructor for raw parameters.
+     */
+    @Test
+    fun testParameterConstructor() {
+        assertEquals(
+            "cat /on one 2",
+            WindowsCommandLine("cat", "/on", "one", 2).commandLineString
+        )
+    }
+
+    /**
+     * Test the addOption() method.
+     */
+    @Test
+    fun testAddOption() {
+        listOf<Pair<String, Any?>>(
+            Pair("on", true),
+            Pair("off", false),
+            Pair("null", null),
+            Pair("blank", ""),
+            Pair("value", 1),
+        ).forEach{ (name, value) -> classUnderTest.addOption(name, value) }
+        assertEquals("cat /on /blank: /value:1", classUnderTest.commandLineString)
+    }
+
+    /**
+     * Test the addOptions() method.
+     */
+    @Test
+    fun testAddOptions() {
+        classUnderTest.addOptions(options)
+        assertEquals(
+            "cat /on /blank: /value:1 /list:a /list:b",
+            classUnderTest.commandLineString
+        )
+    }
+
+    /**
+     * Test the withOptions() method.
+     */
+    @Test
+    fun testWithOptions() {
+        assertSame(classUnderTest, classUnderTest.withOptions(options))
+        assertEquals(
+            "cat /on /blank: /value:1 /list:a /list:b",
             classUnderTest.commandLineString
         )
     }

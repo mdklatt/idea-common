@@ -197,14 +197,13 @@ open class CommandLine() : GeneralCommandLine() {
 
 
 /**
- * Execute an external process via the command line.
+ * Execute an external POSIX process via the command line.
  *
  * To protect potentially sensitive data, input data can be passed to the
  * external command via an in-memory buffer that is cleared when the command
  * is executed.
  */
 class PosixCommandLine() : CommandLine() {
-
     /**
      * Construct an instance with positional arguments and options.
      *
@@ -284,6 +283,97 @@ class PosixCommandLine() : CommandLine() {
      * @return self reference
      */
     fun withOptions(options: Map<String, Any?> = emptyMap()): PosixCommandLine {
+        addOptions(options)
+        return this
+    }
+}
+
+
+/**
+ * Execute an external Windows process via the command line.
+ *
+ * To protect potentially sensitive data, input data can be passed to the
+ * external command via an in-memory buffer that is cleared when the command
+ * is executed.
+ */
+class WindowsCommandLine() : CommandLine() {
+    /**
+     * Construct an instance with positional arguments and options.
+     *
+     * @param exePath: executable path
+     * @param arguments: positional arguments to pass to executable
+     * @param options: options to pass to executable.
+     */
+    constructor(exePath: String, arguments: Sequence<Any> = emptySequence(),
+                options: Map<String, Any?> = emptyMap()) : this() {
+        withExePath(exePath)
+        addOptions(options)
+        arguments.forEach { addParameter(it.toString()) }
+    }
+
+    /**
+     * Construct an instance from raw parameters.
+     *
+     * @param exePath: executable path
+     * @param parameters: parameters to pass to executable
+     */
+    constructor(exePath: String, vararg parameters: Any) : this(exePath, arguments = parameters.asSequence())
+
+    /**
+     * Append a Windows-style option to the command line.
+     *
+     * Boolean values are treated as a switch and are emitted with only a flag
+     * (true) or ignored (false). Sequence<*> values are expanded to emit the
+     * same flag for every value, e.g. `--flag val1 --flag val2 ...`. Null
+     * values are ignored.
+     *
+     * @param name option name
+     * @param value option value
+     */
+    fun addOption(name: String, value: Any?) {
+        if (value == null || value == false) {
+            return  // switch is off, ignore option
+        }
+        var parameter = "/${name}"
+        if (value !is Boolean) {
+            parameter = "${parameter}:${value}"
+        }
+        addParameter(parameter)
+        return
+    }
+
+    /**
+     * Append options to the command line.
+     *
+     * Use a Sequence value to emit multiple instances of the same flag, e.g.
+     * `--flag val1 --flag val2 ...`.
+     *
+     * @see #addOption(String, Any?)
+     * @param options mapping of option flags and values
+     */
+    fun addOptions(options: Map<String, Any?> = emptyMap()) {
+        options.forEach { (name, value) ->
+            if (value is Sequence<*>) {
+                // TODO: Is this how Windows handles multi-valued options?
+                value.forEach { addOption(name, it) }
+            } else {
+                addOption(name, value)
+            }
+        }
+        return
+    }
+
+    /**
+     * Append options to the command line.
+     *
+     * Use a Sequence value to emit multiple instances of the same flag, e.g.
+     * `--flag val1 --flag val2 ...`.
+     *
+     * @see #addOption(String, Any?)
+     * @param options mapping of option flags and values
+     * @return self reference
+     */
+    fun withOptions(options: Map<String, Any?> = emptyMap()): WindowsCommandLine {
         addOptions(options)
         return this
     }

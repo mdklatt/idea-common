@@ -241,4 +241,16 @@ internal class PosixCommandLineTest {
             classUnderTest.commandLineString
         )
     }
+
+    /**
+     * Test the withOptions() method.
+     */
+    @Test
+    fun testWithOptions() {
+        assertSame(classUnderTest, classUnderTest.withOptions(options))
+        assertEquals(
+            "cat --on --blank \"\" --value 1 --list a --list b",
+            classUnderTest.commandLineString
+        )
+    }
 }

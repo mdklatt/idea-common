@@ -235,8 +235,8 @@ class PosixCommandLine() : CommandLine() {
      * same flag for every value, e.g. `--flag val1 --flag val2 ...`. Null
      * values are ignored.
      *
-     * @param name: option name
-     * @param value: option value
+     * @param name option name
+     * @param value option value
      */
     fun addOption(name: String, value: Any?) {
         // Add parameters for a POSIX long-style option, `--flag [value]`.
@@ -260,7 +260,7 @@ class PosixCommandLine() : CommandLine() {
      * `--flag val1 --flag val2 ...`.
      *
      * @see #addOption(String, Any?)
-     * @param options: mapping of option flags and values
+     * @param options mapping of option flags and values
      */
     fun addOptions(options: Map<String, Any?> = emptyMap()) {
         options.forEach { (name, value) ->
@@ -271,5 +271,20 @@ class PosixCommandLine() : CommandLine() {
             }
         }
         return
+    }
+
+    /**
+     * Append options to the command line.
+     *
+     * Use a Sequence value to emit multiple instances of the same flag, e.g.
+     * `--flag val1 --flag val2 ...`.
+     *
+     * @see #addOption(String, Any?)
+     * @param options mapping of option flags and values
+     * @return self reference
+     */
+    fun withOptions(options: Map<String, Any?> = emptyMap()): PosixCommandLine {
+        addOptions(options)
+        return this
     }
 }

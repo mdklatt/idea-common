@@ -228,36 +228,48 @@ class PosixCommandLine() : CommandLine() {
     constructor(exePath: String, vararg parameters: Any) : this(exePath, arguments = parameters.asSequence())
 
     /**
-     * Append POSIX-style options to the command line.
+     * Append a POSIX-style option to the command line.
      *
-     * Boolean values are treated as a switch and are emitted with no value
-     * (true) or ignored (false). Sequence<*> values are expanded to emit
-     * the same flag for every value, e.g. `--flag val1 --flag val2 ...`.
-     * Null-valued options are ignored.
+     * Boolean values are treated as a switch and are emitted with only a flag
+     * (true) or ignored (false). Sequence<*> values are expanded to emit the
+     * same flag for every value, e.g. `--flag val1 --flag val2 ...`. Null
+     * values are ignored.
      *
+     * @param name: option name
+     * @param value: option value
+     */
+    fun addOption(name: String, value: Any?) {
+        // Add parameters for a POSIX long-style option, `--flag [value]`.
+        // This does not support the `--flag=value` option style because
+        // that is not as widely supported.
+        // TODO: Support short options, e.g. `-f value`.
+        if (value == null || value == false) {
+            return  // switch is off, ignore option
+        }
+        addParameter("--$name")
+        if (value !is Boolean) {
+            addParameter(value)  // not a switch, append value
+        }
+        return
+    }
+
+    /**
+     * Append options to the command line.
+     *
+     * Use a Sequence value to emit multiple instances of the same flag, e.g.
+     * `--flag val1 --flag val2 ...`.
+     *
+     * @see #addOption(String, Any?)
      * @param options: mapping of option flags and values
      */
-    fun addOptions(options: Map<String, Any?> = emptyMap()): PosixCommandLine {
-        fun add(name: String, value: Any?) {
-            // Add parameters for a POSIX long-style option, `--flag [value]`.
-            // This does not support the `--flag=value` option style because
-            // that is not as widely supported
-            // TODO: Support short options, e.g. `-f value`.
-            if (value == null || value == false) {
-                return  // switch is off, ignore option
-            }
-            addParameter("--$name")
-            if (value !is Boolean) {
-                addParameter(value.toString())  // not a switch, append value
-            }
-        }
+    fun addOptions(options: Map<String, Any?> = emptyMap()) {
         options.forEach { (name, value) ->
             if (value is Sequence<*>) {
-                value.forEach { add(name, it) }
+                value.forEach { addOption(name, it) }
             } else {
-                add(name, value)
+                addOption(name, value)
             }
         }
-        return this
+        return
     }
 }

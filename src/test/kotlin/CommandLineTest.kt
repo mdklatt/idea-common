@@ -216,11 +216,26 @@ internal class PosixCommandLineTest {
     }
 
     /**
+     * Test the addOption() method.
+     */
+    @Test
+    fun testAddOption() {
+        listOf<Pair<String, Any?>>(
+            Pair("on", true),
+            Pair("off", false),
+            Pair("null", null),
+            Pair("blank", ""),
+            Pair("value", 1),
+        ).forEach{ (name, value) -> classUnderTest.addOption(name, value) }
+        assertEquals("cat --on --blank \"\" --value 1", classUnderTest.commandLineString)
+    }
+
+    /**
      * Test the addOptions() method.
      */
     @Test
     fun testAddOptions() {
-        assertSame(classUnderTest, classUnderTest.addOptions(options))
+        classUnderTest.addOptions(options)
         assertEquals(
             "cat --on --blank \"\" --value 1 --list a --list b",
             classUnderTest.commandLineString

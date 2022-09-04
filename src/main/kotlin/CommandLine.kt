@@ -195,6 +195,61 @@ open class CommandLine() : GeneralCommandLine() {
     }
 }
 
+/**
+ * A command line process that supports optional parameters.
+ */
+abstract class CommandLineWithOptions() : CommandLine() {
+
+    protected abstract fun emitOption(name: String, value: Any?): Sequence<Any>
+
+    /**
+     * Append an option to the command line.
+     *
+     * @param name option name
+     * @param value option value
+     */
+    fun addOption(name: String, value: Any?) {
+        emitOption(name, value).forEach { addParameter(it) }
+        return
+    }
+
+    /**
+     * Append options to the command line.
+     *
+     * Use a Sequence for multivalued options.
+     *
+     * @see #addOption(String, Any?)
+     * @param options mapping of option flags and values
+     */
+    fun addOptions(options: Map<String, Any?> = emptyMap()) {
+        options.forEach { (name, value) ->
+            if (value is Sequence<*>) {
+                value.forEach { addOption(name, it) }
+            } else if (value is Collection<*>) {
+                value.forEach { addOption(name, it) }
+            } else {
+                addOption(name, value)
+            }
+        }
+        return
+    }
+
+    /**
+     * Append options to the command line.
+     *
+     * Use a Sequence for multivalued options.
+     *
+     * @see #addOption(String, Any?)
+     * @param options mapping of option flags and values
+     * @return self reference
+     */
+    fun withOptions(options: Map<String, Any?> = emptyMap()): CommandLineWithOptions {
+        addOptions(options)
+        return this
+    }
+
+
+}
 
 /**
  * Execute an external POSIX process via the command line.
@@ -203,7 +258,7 @@ open class CommandLine() : GeneralCommandLine() {
  * external command via an in-memory buffer that is cleared when the command
  * is executed.
  */
-class PosixCommandLine() : CommandLine() {
+class PosixCommandLine() : CommandLineWithOptions() {
     /**
      * Construct an instance with positional arguments and options.
      *
@@ -227,7 +282,7 @@ class PosixCommandLine() : CommandLine() {
     constructor(exePath: String, vararg parameters: Any) : this(exePath, arguments = parameters.asSequence())
 
     /**
-     * Append a POSIX-style option to the command line.
+     * Emit parameters for a POSIX-style option.
      *
      * Boolean values are treated as a switch and are emitted with only a flag
      * (true) or ignored (false). Sequence<*> values are expanded to emit the
@@ -237,54 +292,19 @@ class PosixCommandLine() : CommandLine() {
      * @param name option name
      * @param value option value
      */
-    fun addOption(name: String, value: Any?) {
+    override fun emitOption(name: String, value: Any?): Sequence<Any> {
         // Add parameters for a POSIX long-style option, `--flag [value]`.
         // This does not support the `--flag=value` option style because
         // that is not as widely supported.
         // TODO: Support short options, e.g. `-f value`.
-        if (value == null || value == false) {
-            return  // switch is off, ignore option
-        }
-        addParameter("--$name")
-        if (value !is Boolean) {
-            addParameter(value)  // not a switch, append value
-        }
-        return
-    }
-
-    /**
-     * Append options to the command line.
-     *
-     * Use a Sequence value to emit multiple instances of the same flag, e.g.
-     * `--flag val1 --flag val2 ...`.
-     *
-     * @see #addOption(String, Any?)
-     * @param options mapping of option flags and values
-     */
-    fun addOptions(options: Map<String, Any?> = emptyMap()) {
-        options.forEach { (name, value) ->
-            if (value is Sequence<*>) {
-                value.forEach { addOption(name, it) }
-            } else {
-                addOption(name, value)
+        return sequence {
+            if (value != null && value != false) {
+                yield("--$name")
+                if (value !is Boolean) {
+                    yield(value)  // not a switch, append value
+                }
             }
         }
-        return
-    }
-
-    /**
-     * Append options to the command line.
-     *
-     * Use a Sequence value to emit multiple instances of the same flag, e.g.
-     * `--flag val1 --flag val2 ...`.
-     *
-     * @see #addOption(String, Any?)
-     * @param options mapping of option flags and values
-     * @return self reference
-     */
-    fun withOptions(options: Map<String, Any?> = emptyMap()): PosixCommandLine {
-        addOptions(options)
-        return this
     }
 }
 
@@ -296,7 +316,7 @@ class PosixCommandLine() : CommandLine() {
  * external command via an in-memory buffer that is cleared when the command
  * is executed.
  */
-class WindowsCommandLine() : CommandLine() {
+class WindowsCommandLine() : CommandLineWithOptions() {
     /**
      * Construct an instance with positional arguments and options.
      *
@@ -320,7 +340,7 @@ class WindowsCommandLine() : CommandLine() {
     constructor(exePath: String, vararg parameters: Any) : this(exePath, arguments = parameters.asSequence())
 
     /**
-     * Append a Windows-style option to the command line.
+     * Emit parameters for a Windows-style option.
      *
      * Boolean values are treated as a switch and are emitted with only a flag
      * (true) or ignored (false). Sequence<*> values are expanded to emit the
@@ -330,51 +350,15 @@ class WindowsCommandLine() : CommandLine() {
      * @param name option name
      * @param value option value
      */
-    fun addOption(name: String, value: Any?) {
-        if (value == null || value == false) {
-            return  // switch is off, ignore option
-        }
-        var parameter = "/${name}"
-        if (value !is Boolean) {
-            parameter = "${parameter}:${value}"
-        }
-        addParameter(parameter)
-        return
-    }
-
-    /**
-     * Append options to the command line.
-     *
-     * Use a Sequence value to emit multiple instances of the same flag, e.g.
-     * `--flag val1 --flag val2 ...`.
-     *
-     * @see #addOption(String, Any?)
-     * @param options mapping of option flags and values
-     */
-    fun addOptions(options: Map<String, Any?> = emptyMap()) {
-        options.forEach { (name, value) ->
-            if (value is Sequence<*>) {
-                // TODO: Is this how Windows handles multi-valued options?
-                value.forEach { addOption(name, it) }
-            } else {
-                addOption(name, value)
+    override fun emitOption(name: String, value: Any?): Sequence<Any> {
+        return sequence {
+            if (value != null && value != false) {
+                var parameter = "/${name}"
+                if (value !is Boolean) {
+                    parameter = "${parameter}:${value}"
+                }
+                yield(parameter)
             }
         }
-        return
-    }
-
-    /**
-     * Append options to the command line.
-     *
-     * Use a Sequence value to emit multiple instances of the same flag, e.g.
-     * `--flag val1 --flag val2 ...`.
-     *
-     * @see #addOption(String, Any?)
-     * @param options mapping of option flags and values
-     * @return self reference
-     */
-    fun withOptions(options: Map<String, Any?> = emptyMap()): WindowsCommandLine {
-        addOptions(options)
-        return this
     }
 }

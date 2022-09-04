@@ -179,7 +179,7 @@ internal class PosixCommandLineTest {
         "null" to null,
         "blank" to "",
         "value" to 1,
-        "list" to listOf('a', 'b').asSequence(),
+        "list" to listOf('a', 'b'),
     )
 
     /**

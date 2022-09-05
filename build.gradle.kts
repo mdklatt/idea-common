@@ -7,10 +7,6 @@ plugins {
     id("java-library")
 }
 
-intellij {
-    version.set("2022.1")
-}
-
 repositories {
     mavenCentral()
 }
@@ -18,10 +14,23 @@ repositories {
 dependencies {
     implementation(platform("org.jetbrains.kotlin:kotlin-bom"))
     testImplementation(kotlin("test"))
+    testImplementation(platform("org.junit:junit-bom:5.8.2"))
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter")
+    testRuntimeOnly("org.junit.vintage:junit-vintage-engine")
+}
+
+intellij {
+    type.set("IC")
+    version.set("2022.1")
 }
 
 tasks {
     wrapper {
         gradleVersion = "7.5.1"
+    }
+
+    test {
+        useJUnitPlatform()
     }
 }

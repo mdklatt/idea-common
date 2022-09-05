@@ -1,7 +1,7 @@
 /**
  * Command line utilities.
  */
-package dev.mdklatt.idea.util
+package dev.mdklatt.idea.util.exec
 
 import com.intellij.execution.configurations.GeneralCommandLine
 import com.intellij.util.execution.ParametersListUtil

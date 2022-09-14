@@ -1,7 +1,8 @@
-package dev.mdklatt.idea.common.map.test
+/**
+ * Test suite for Map.kt
+ */
+package dev.mdklatt.idea.common.map
 
-import dev.mdklatt.idea.common.map.findAllKeys
-import dev.mdklatt.idea.common.map.findFirstKey
 import kotlin.test.Test
 import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals

@@ -1,6 +1,6 @@
 plugins {
     id("org.jetbrains.kotlin.jvm") version("1.7.10")
-    id("org.jetbrains.intellij") version("1.8.0")
+    id("org.jetbrains.intellij") version("1.9.0")
     id("java-library")
 }
 
@@ -13,7 +13,7 @@ dependencies {
     testImplementation(kotlin("test"))
 
     // JUnit3 (junit-vintage) is required for running IDEA platform tests.
-    testImplementation(platform("org.junit:junit-bom:5.8.2"))
+    testImplementation(platform("org.junit:junit-bom:5.9.0"))
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter")
     testRuntimeOnly("org.junit.vintage:junit-vintage-engine")

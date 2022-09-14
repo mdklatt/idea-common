@@ -17,14 +17,24 @@ import kotlin.test.assertContentEquals
  */
 internal class StoredPasswordTest : BasePlatformTestCase() {
 
-    private val value = charArrayOf('1', '2', '3', '4')
-    private val password = StoredPassword(this::class.java.getPackage().name)
+    private lateinit var value: CharArray
+    private lateinit var password: StoredPassword
+
+    /**
+     * Per-test initialization.
+     */
+    override fun setUp() {
+        super.setUp()
+        value = charArrayOf('1', '2', '3', '4')
+        password = StoredPassword(this::class.java.getPackage().name)
+    }
 
     /**
      * Per-test cleanup.
      */
     override fun tearDown() {
         password.value = null  // remove from credential store
+        super.tearDown()
     }
 
     /**
@@ -35,7 +45,7 @@ internal class StoredPasswordTest : BasePlatformTestCase() {
     }
 
     /**
-     * Test value set/get.
+     * Test value set()/get().
      */
     fun testValue() {
         password.value = value
@@ -47,6 +57,7 @@ internal class StoredPasswordTest : BasePlatformTestCase() {
      */
     fun testRemove() {
         password.value = value
+        assertNotNull(password.value)
         password.value = null
         assertNull(password.value)
     }

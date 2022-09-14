@@ -17,7 +17,7 @@ import java.nio.CharBuffer
  */
 open class CommandLine() : GeneralCommandLine() {
 
-    private var inputBuffer: ByteArray? = null
+    private var stdinBuffer: ByteArray? = null
 
     /**
      * Construct an instance from raw parameters.
@@ -124,7 +124,7 @@ open class CommandLine() : GeneralCommandLine() {
      * @see #withInput(File?)
      */
     fun withInput(input: String): CommandLine {
-        inputBuffer = input.toByteArray()
+        stdinBuffer = input.toByteArray()
         return this
     }
 
@@ -141,7 +141,7 @@ open class CommandLine() : GeneralCommandLine() {
      */
     fun withInput(input: CharArray): CommandLine {
         val bytes = Charsets.UTF_8.encode(CharBuffer.wrap(input))
-        inputBuffer = bytes.array()
+        stdinBuffer = bytes.array()
         return this
     }
 
@@ -154,7 +154,7 @@ open class CommandLine() : GeneralCommandLine() {
     override fun buildProcess(builder: ProcessBuilder): ProcessBuilder {
         // Redirect STDIN to a pipe so that it can be written to once the
         // process has been started, cf. createProcess().
-        if (inputBuffer != null) {
+        if (stdinBuffer != null) {
             builder.redirectInput(ProcessBuilder.Redirect.PIPE)
         }
         return builder
@@ -167,13 +167,13 @@ open class CommandLine() : GeneralCommandLine() {
      */
     override fun createProcess(): Process {
         val process = super.createProcess()
-        inputBuffer?.let { buffer ->
+        stdinBuffer?.let { buffer ->
             // Process.outputStream is STDIN for the external command.
-            process.outputStream.write(inputBuffer)
+            process.outputStream.write(stdinBuffer)
             process.outputStream.close()
             buffer.fill(0)  // clear data from memory
         }
-        inputBuffer = null
+        stdinBuffer = null
         return process
     }
 
@@ -188,6 +188,8 @@ open class CommandLine() : GeneralCommandLine() {
     }
 
     companion object {
+        // TODO: Should these be free functions?
+
         /**
          * Join command line arguments using shell syntax.
          *
@@ -276,16 +278,11 @@ abstract class CommandLineWithOptions : CommandLine() {
         addOptions(options)
         return this
     }
-
-
 }
+
 
 /**
  * Execute an external POSIX process via the command line.
- *
- * To protect potentially sensitive data, input data can be passed to the
- * external command via an in-memory buffer that is cleared when the command
- * is executed.
  */
 class PosixCommandLine() : CommandLineWithOptions() {
     /**
@@ -323,7 +320,7 @@ class PosixCommandLine() : CommandLineWithOptions() {
     override fun emitOption(name: String, value: Any?): Sequence<Any> {
         // Add parameters for a POSIX long-style option, `--flag [value]`.
         // This does not support the `--flag=value` option style because
-        // that is not as widely supported.
+        // that is not as universally supported.
         // TODO: Support short options, e.g. `-f value`.
         return sequence {
             if (value != null && value != false) {
@@ -339,10 +336,6 @@ class PosixCommandLine() : CommandLineWithOptions() {
 
 /**
  * Execute an external Windows process via the command line.
- *
- * To protect potentially sensitive data, input data can be passed to the
- * external command via an in-memory buffer that is cleared when the command
- * is executed.
  */
 class WindowsCommandLine() : CommandLineWithOptions() {
     /**

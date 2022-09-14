@@ -38,7 +38,12 @@ A modal dialog box to use as a password prompt.
 
 ## Installation
 
-Use Gradle to install as a [source dependency][4].
+Gradle can install the library as a [source dependency][4]. However, there does
+not seem to be any support for pinning to a Git tag or commit hash yet. Beware 
+of installing directly from GitHub because backwards compatibility is likely to
+break at some point. A safer option is to install from a local clone that is
+not automatically updated.
+
 
 **settings.gradle.kts**
 ```kotlin

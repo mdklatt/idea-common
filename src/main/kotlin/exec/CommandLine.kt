@@ -77,7 +77,7 @@ open class CommandLine() : GeneralCommandLine() {
      * Append parameters to the command line.
      *
      * @param parameters: command parameters
-     * @return self reference
+     * @return this instance
      */
     fun withParameters(parameters: Sequence<Any>): CommandLine {
         addParameters(parameters)
@@ -88,10 +88,27 @@ open class CommandLine() : GeneralCommandLine() {
      * Append parameters to the command line.
      *
      * @param parameters: command parameters
-     * @return self reference
+     * @return this instance
      */
     fun withParameters(vararg parameters: Any): CommandLine {
         addParameters(parameters.asSequence())
+        return this
+    }
+
+    /**
+     * Pass environment variables to the external command.
+     *
+     * Per convention, Boolean values will be converted to "0" for false and
+     * "1" for true. Null values are ignored.
+     *
+     * @param environment mapping of environment variables
+     * @return this instance
+     */
+    fun withEnvironment(environment: Map<String, Any?>): CommandLine {
+        fun Boolean.toIntString() = if (this) "1" else "0"
+        super.withEnvironment(environment.filter{ it.value != null}.mapValues {
+            if (it.value is Boolean) (it.value as Boolean).toIntString() else it.value.toString()
+        })
         return this
     }
 
@@ -102,7 +119,7 @@ open class CommandLine() : GeneralCommandLine() {
      * be called prior to each invocation.
      *
      * @param input: STDIN contents
-     * @return self reference
+     * @return this instance
      *
      * @see #withInput(File?)
      */
@@ -118,7 +135,7 @@ open class CommandLine() : GeneralCommandLine() {
      * be called prior to each invocation.
      *
      * @param input: STDIN contents
-     * @return: self reference
+     * @return: this instance
      *
      * @see #withInput(File?)
      */
@@ -131,7 +148,7 @@ open class CommandLine() : GeneralCommandLine() {
     /**
      * Final configuration of the ProcessBuilder before starting the process.
      *
-     * @param builder: filled ProcessBuilder
+     * @param builder: final ProcessBuilder
      * @return builder instance
      */
     override fun buildProcess(builder: ProcessBuilder): ProcessBuilder {
@@ -160,6 +177,11 @@ open class CommandLine() : GeneralCommandLine() {
         return process
     }
 
+    /**
+     * Set the path to the external command.
+     *
+     * @param exePath path
+     */
     final override fun setExePath(exePath: String) {
         super.setExePath(exePath)
         return
@@ -199,7 +221,14 @@ open class CommandLine() : GeneralCommandLine() {
  * A command line process that supports optional parameters.
  */
 abstract class CommandLineWithOptions() : CommandLine() {
-
+    /**
+     * Emit parameters for a named option.
+     *
+     * @param name: option name
+     * @param value: option value
+     *
+     * @return: zero or more command line parameters
+     */
     protected abstract fun emitOption(name: String, value: Any?): Sequence<Any>
 
     /**
@@ -216,7 +245,7 @@ abstract class CommandLineWithOptions() : CommandLine() {
     /**
      * Append options to the command line.
      *
-     * Use a Sequence for multivalued options.
+     * Use a Sequence as an option value to repeat that option.
      *
      * @see #addOption(String, Any?)
      * @param options mapping of option flags and values
@@ -241,7 +270,7 @@ abstract class CommandLineWithOptions() : CommandLine() {
      *
      * @see #addOption(String, Any?)
      * @param options mapping of option flags and values
-     * @return self reference
+     * @return this instance
      */
     fun withOptions(options: Map<String, Any?> = emptyMap()): CommandLineWithOptions {
         addOptions(options)
@@ -285,12 +314,11 @@ class PosixCommandLine() : CommandLineWithOptions() {
      * Emit parameters for a POSIX-style option.
      *
      * Boolean values are treated as a switch and are emitted with only a flag
-     * (true) or ignored (false). Sequence<*> values are expanded to emit the
-     * same flag for every value, e.g. `--flag val1 --flag val2 ...`. Null
-     * values are ignored.
+     * (true) or ignored (false).
      *
      * @param name option name
      * @param value option value
+     * @return command line parameters
      */
     override fun emitOption(name: String, value: Any?): Sequence<Any> {
         // Add parameters for a POSIX long-style option, `--flag [value]`.
@@ -343,12 +371,11 @@ class WindowsCommandLine() : CommandLineWithOptions() {
      * Emit parameters for a Windows-style option.
      *
      * Boolean values are treated as a switch and are emitted with only a flag
-     * (true) or ignored (false). Sequence<*> values are expanded to emit the
-     * same flag for every value, e.g. `--flag val1 --flag val2 ...`. Null
-     * values are ignored.
+     * (true) or ignored (false).
      *
      * @param name option name
      * @param value option value
+     * @return command line parameters
      */
     override fun emitOption(name: String, value: Any?): Sequence<Any> {
         return sequence {

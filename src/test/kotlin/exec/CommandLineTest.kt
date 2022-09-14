@@ -8,6 +8,7 @@ import dev.mdklatt.idea.common.exec.PosixCommandLine
 import dev.mdklatt.idea.common.exec.WindowsCommandLine
 import kotlin.io.path.createTempFile
 import kotlin.test.Test
+import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
 import kotlin.test.assertSame
 
@@ -46,7 +47,7 @@ internal class CommandLineTest {
      * Test the secondary variadic constructor.
      */
     @Test
-    fun testVarargsConstructor() {
+    fun testVarargConstructor() {
         assertEquals(
             command,
             CommandLine("cat", "--on", "one", 2).commandLineString
@@ -78,7 +79,7 @@ internal class CommandLineTest {
      * Test the addParameters(vararg) method.
      */
     @Test
-    fun testAddParametersVarargs() {
+    fun testAddParametersVararg() {
         classUnderTest.addParameters("--on", "one")
         classUnderTest.addParameters(2)  // test append
         assertEquals(command, classUnderTest.commandLineString)
@@ -97,9 +98,31 @@ internal class CommandLineTest {
      * Test the withParameters(vararg) method.
      */
     @Test
-    fun testWithParametersVariadic() {
+    fun testWithParametersVararg() {
         assertSame(classUnderTest, classUnderTest.withParameters("--on", "one", 2))
         assertEquals(command, classUnderTest.commandLineString)
+    }
+
+    /**
+     * Test the withEnvironment() method.
+     */
+    @Test
+    fun testWithEnvironment() {
+        classUnderTest.withEnvironment(mapOf (
+            "STR" to "abc",
+            "NUM" to 1,
+            "TRUE" to true,
+            "FALSE" to false,
+            "NULL" to null,
+
+        ))
+        val expected = mapOf(
+            "STR" to "abc",
+            "NUM" to "1",
+            "TRUE" to "1",
+            "FALSE" to "0",
+        )
+        assertEquals(expected, classUnderTest.environment)
     }
 
     /**

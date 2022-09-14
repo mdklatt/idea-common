@@ -220,7 +220,7 @@ open class CommandLine() : GeneralCommandLine() {
 /**
  * A command line process that supports optional parameters.
  */
-abstract class CommandLineWithOptions() : CommandLine() {
+abstract class CommandLineWithOptions : CommandLine() {
     /**
      * Emit parameters for a named option.
      *

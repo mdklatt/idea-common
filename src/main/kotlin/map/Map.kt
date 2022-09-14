@@ -1,7 +1,7 @@
 /**
  * Extensions for the Map class.
  */
-package dev.mdklatt.idea.util.map
+package dev.mdklatt.idea.common.map
 
 
 /**

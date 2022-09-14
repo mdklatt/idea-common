@@ -1,1 +1,1 @@
-rootProject.name = "idea-util"
+rootProject.name = "idea-common"

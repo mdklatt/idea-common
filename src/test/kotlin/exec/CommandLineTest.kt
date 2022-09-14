@@ -1,11 +1,11 @@
 /**
  * Test suite for CommandLine.kt.
  */
-package dev.mdklatt.idea.util.exec.test
+package dev.mdklatt.idea.common.exec.test
 
-import dev.mdklatt.idea.util.exec.CommandLine
-import dev.mdklatt.idea.util.exec.PosixCommandLine
-import dev.mdklatt.idea.util.exec.WindowsCommandLine
+import dev.mdklatt.idea.common.exec.CommandLine
+import dev.mdklatt.idea.common.exec.PosixCommandLine
+import dev.mdklatt.idea.common.exec.WindowsCommandLine
 import kotlin.io.path.createTempFile
 import kotlin.test.Test
 import kotlin.test.assertEquals

@@ -1,7 +1,7 @@
-package dev.mdklatt.idea.util.password.test
+package dev.mdklatt.idea.common.password.test
 
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
-import dev.mdklatt.idea.util.password.PasswordDialog
+import dev.mdklatt.idea.common.password.PasswordDialog
 
 
 // The IDEA platform tests use JUnit3, so method names are used to determine

@@ -1,4 +1,4 @@
-package dev.mdklatt.idea.util.password
+package dev.mdklatt.idea.common.password
 
 import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.ui.dsl.builder.panel

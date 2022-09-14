@@ -1,4 +1,4 @@
-package dev.mdklatt.idea.util.password
+package dev.mdklatt.idea.common.password
 
 import com.intellij.credentialStore.CredentialAttributes
 import com.intellij.credentialStore.Credentials

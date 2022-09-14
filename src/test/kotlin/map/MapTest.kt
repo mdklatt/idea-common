@@ -1,7 +1,7 @@
-package dev.mdklatt.idea.util.map.test
+package dev.mdklatt.idea.common.map.test
 
-import dev.mdklatt.idea.util.map.findAllKeys
-import dev.mdklatt.idea.util.map.findFirstKey
+import dev.mdklatt.idea.common.map.findAllKeys
+import dev.mdklatt.idea.common.map.findFirstKey
 import kotlin.test.Test
 import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals

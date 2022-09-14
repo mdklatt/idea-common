@@ -1,7 +1,7 @@
-package dev.mdklatt.idea.util.password.test
+package dev.mdklatt.idea.common.password.test
 
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
-import dev.mdklatt.idea.util.password.StoredPassword
+import dev.mdklatt.idea.common.password.StoredPassword
 import kotlin.test.assertContentEquals
 
 

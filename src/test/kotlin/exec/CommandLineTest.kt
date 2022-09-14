@@ -8,7 +8,6 @@ import dev.mdklatt.idea.common.exec.PosixCommandLine
 import dev.mdklatt.idea.common.exec.WindowsCommandLine
 import kotlin.io.path.createTempFile
 import kotlin.test.Test
-import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
 import kotlin.test.assertSame
 
@@ -203,6 +202,7 @@ internal class PosixCommandLineTest {
         "blank" to "",
         "value" to 1,
         "list" to listOf('a', 'b'),
+        "s" to "short"
     )
 
     /**
@@ -223,7 +223,7 @@ internal class PosixCommandLineTest {
     fun testStructuredConstructor() {
         val arguments = sequenceOf("one", 2)
         assertEquals(
-            "cat --on --blank \"\" --value 1 --list a --list b one 2",
+            "cat --on --blank \"\" --value 1 --list a --list b -s short one 2",
             PosixCommandLine("cat", arguments, options).commandLineString
         )
     }
@@ -261,7 +261,7 @@ internal class PosixCommandLineTest {
     fun testAddOptions() {
         classUnderTest.addOptions(options)
         assertEquals(
-            "cat --on --blank \"\" --value 1 --list a --list b",
+            "cat --on --blank \"\" --value 1 --list a --list b -s short",
             classUnderTest.commandLineString
         )
     }
@@ -273,7 +273,7 @@ internal class PosixCommandLineTest {
     fun testWithOptions() {
         assertSame(classUnderTest, classUnderTest.withOptions(options))
         assertEquals(
-            "cat --on --blank \"\" --value 1 --list a --list b",
+            "cat --on --blank \"\" --value 1 --list a --list b -s short",
             classUnderTest.commandLineString
         )
     }
@@ -287,6 +287,7 @@ internal class WindowsCommandLineTest {
 
     private val classUnderTest = WindowsCommandLine("cat")
     private val options = mapOf(
+        // TODO: Does Windows even allow long names like this?
         "on" to true,
         "off" to false,
         "null" to null,

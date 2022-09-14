@@ -311,20 +311,25 @@ class PosixCommandLine() : CommandLineWithOptions() {
      * Emit parameters for a POSIX-style option.
      *
      * Boolean values are treated as a switch and are emitted with only a flag
-     * (true) or ignored (false).
+     * (true) or ignored (false). Long-style value options are emitted as
+     * `--flag value`, not `--flag=value`
      *
      * @param name option name
      * @param value option value
      * @return command line parameters
      */
     override fun emitOption(name: String, value: Any?): Sequence<Any> {
-        // Add parameters for a POSIX long-style option, `--flag [value]`.
-        // This does not support the `--flag=value` option style because
-        // that is not as universally supported.
-        // TODO: Support short options, e.g. `-f value`.
-        return sequence {
-            if (value != null && value != false) {
-                yield("--$name")
+        return if (value == null || value == false) {
+            sequenceOf()  // ignore this option
+        } else {
+            sequence {
+                // Assume this is a short option if the name has length 1.
+                // Another approach would be to treat a Char name as a short
+                // option and a String name is a long option, but let's not go
+                // crazy. Allowing `name: Any` would encourage chaos, and `--x`
+                // has never personally been observed in the wild.
+                val delimiter = if (name.length == 1) "-" else "--"
+                yield("${delimiter}$name")
                 if (value !is Boolean) {
                     yield(value)  // not a switch, append value
                 }

@@ -2,6 +2,7 @@ plugins {
     id("org.jetbrains.kotlin.jvm") version("1.7.10")
     id("org.jetbrains.intellij") version("1.9.0")
     id("java-library")
+    id("maven-publish")
 }
 
 repositories {
@@ -29,4 +30,22 @@ intellij {
     val platformVersion: String by project  // see gradle.properties
     version.set(platformVersion)
     type.set("IC")  // IntelliJ Community
+}
+
+publishing {
+    publications {
+        create<MavenPublication>("main") {
+            from(components["java"])
+        }
+    }
+    repositories {
+        maven {
+            name = "GitHubPackages"
+            url = uri("https://maven.pkg.github.com/mdklatt/idea-common/")
+            credentials {
+                username = System.getenv("GITHUB_ACTOR")
+                password = System.getenv("GITHUB_TOKEN")
+            }
+        }
+    }
 }

@@ -12,10 +12,8 @@ dependencies {
     implementation(platform("org.jetbrains.kotlin:kotlin-bom"))
     testImplementation(kotlin("test"))
 
-    // JUnit3 (junit-vintage) is required for running IDEA platform tests.
+    // JUnit3 is required for running IDEA platform tests.
     testImplementation(platform("org.junit:junit-bom:5.9.0"))
-    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter")
     testRuntimeOnly("org.junit.vintage:junit-vintage-engine")
 }
 
@@ -23,14 +21,11 @@ tasks {
     wrapper {
         gradleVersion = "7.5.1"
     }
-    test {
-        useJUnitPlatform()
-    }
 }
 
 intellij {
     // Even though this is not an IDEA plugin project, this is required to
-    // resolve the platform APIs used by this library.
+    // resolve the platform dependencies used by this library.
     val platformVersion: String by project  // see gradle.properties
     version.set(platformVersion)
     type.set("IC")  // IntelliJ Community

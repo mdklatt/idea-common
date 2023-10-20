@@ -254,12 +254,16 @@ abstract class CommandLineWithOptions : CommandLine() {
      */
     fun addOptions(options: Map<String, Any?> = emptyMap()) {
         options.forEach { (name, value) ->
-            if (value is Sequence<*>) {
-                value.forEach { addOption(name, it) }
-            } else if (value is Collection<*>) {
-                value.forEach { addOption(name, it) }
-            } else {
-                addOption(name, value)
+            when (value) {
+                is Sequence<*> -> {
+                    value.forEach { addOption(name, it) }
+                }
+                is Collection<*> -> {
+                    value.forEach { addOption(name, it) }
+                }
+                else -> {
+                    addOption(name, value)
+                }
             }
         }
         return
@@ -335,6 +339,86 @@ class PosixCommandLine() : CommandLineWithOptions() {
                 }
             }
         }
+    }
+
+    companion object {
+        /**
+         * Concatenate multiple commands.
+         *
+         * @param commands sequence of commands to execute as a unit
+         * @param op operator, e.g. `&&`, `||`, or `;`
+         * @return new command
+         */
+        private fun concat(commands: Sequence<PosixCommandLine>, op: String): PosixCommandLine {
+            // Bare operators cannot be used as GeneralCommandLine arguments, so
+            // the concatenated command itself has to be an argument.
+            val compoundCommand = commands.map { it.commandLineString }.joinToString(" ${op.trim()} ")
+            return PosixCommandLine("sh", "-c", compoundCommand)
+        }
+
+        /**
+         * AND multiple commands into a single command.
+         *
+         * Commands will be executed in order until one exits with a failure
+         * status.
+         *
+         * @param commands sequence of commands to execute as a unit
+         * @return new command
+         */
+        fun and(commands: Sequence<PosixCommandLine>) = concat(commands, "&&")
+
+        /**
+         * AND one or commands into a single command.
+         *
+         * Commands will be executed in order until one exits with a failure
+         * status.
+         *
+         * @param command command(s) to execute as a unit
+         * @return new command
+         */
+        fun and(vararg command: PosixCommandLine) = concat(sequenceOf(*command), "&&")
+
+        /**
+         * OR multiple commands into a single command.
+         *
+         * Commands will be executed in order until one exits with a success
+         * status.
+         *
+         * @param commands sequence of commands to execute as a unit
+         * @return new command
+         */
+        fun or(commands: Sequence<PosixCommandLine>) = concat(commands, "||")
+
+        /**
+         * OR one or more commands into a single command.
+         *
+         * Commands will be executed in order until one exits with a success
+         * status.
+         *
+         * @param command command(s) to execute as a unit
+         * @return new command
+         */
+        fun or(vararg command: PosixCommandLine) = concat(sequenceOf(*command), "||")
+
+        /**
+         * Sequence multiple commands into a single command.
+         *
+         * Commands will be executed in order regardless of exit status.
+         *
+         * @param commands sequence of commands to execute as a unit
+         * @return new command
+         */
+        fun seq(commands: Sequence<PosixCommandLine>) = concat(commands, ";")
+
+        /**
+         * Sequence one or more commands into a single command.
+         *
+         * Commands will be executed in order regardless of exit status.
+         *
+         * @param command command(s) to execute as a unit
+         * @return new command
+         */
+        fun seq(vararg command: PosixCommandLine) = concat(sequenceOf(*command), ";")
     }
 }
 

@@ -203,6 +203,78 @@ internal class PosixCommandLineTest {
     )
 
     /**
+     * Test the and() companion method with a sequence of commands.
+     */
+    @Test
+    fun testAndSequence() {
+        val command = PosixCommandLine.and(sequenceOf(
+            PosixCommandLine("true"),
+            PosixCommandLine("false"),
+        ))
+        assertEquals("sh -c \"true && false\"", command.commandLineString)
+    }
+
+    /**
+     * Test the and() companion method with variable arguments
+     */
+    @Test
+    fun testAndVarArg() {
+        val command = PosixCommandLine.and(
+            PosixCommandLine("true"),
+            PosixCommandLine("false"),
+        )
+        assertEquals("sh -c \"true && false\"", command.commandLineString)
+    }
+
+    /**
+     * Test the or() companion method with a sequence of commands.
+     */
+    @Test
+    fun testOrSequence() {
+        val command = PosixCommandLine.or(sequenceOf(
+            PosixCommandLine("false"),
+            PosixCommandLine("true"),
+        ))
+        assertEquals("sh -c \"false || true\"", command.commandLineString)
+    }
+
+    /**
+     * Test the or() companion method with variable arguments
+     */
+    @Test
+    fun testOrVarArg() {
+        val command = PosixCommandLine.or(
+            PosixCommandLine("false"),
+            PosixCommandLine("true"),
+        )
+        assertEquals("sh -c \"false || true\"", command.commandLineString)
+    }
+
+    /**
+     * Test the seq() companion method with a sequence of commands.
+     */
+    @Test
+    fun testSeqSequence() {
+        val command = PosixCommandLine.seq(sequenceOf(
+            PosixCommandLine("false"),
+            PosixCommandLine("false"),
+        ))
+        assertEquals("sh -c \"false ; false\"", command.commandLineString)
+    }
+
+    /**
+     * Test the seq() companion method with variable arguments
+     */
+    @Test
+    fun testSeqVarArg() {
+        val command = PosixCommandLine.seq(
+            PosixCommandLine("false"),
+            PosixCommandLine("false"),
+        )
+        assertEquals("sh -c \"false ; false\"", command.commandLineString)
+    }
+
+    /**
      * Test the primary constructor.
      */
     @Test

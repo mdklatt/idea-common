@@ -47,7 +47,7 @@ break at some point. A safer option is to install from a local clone that is
 not automatically updated.
 
 **settings.gradle.kts**
-```kotlin
+``` kotlin
 sourceControl {
     gitRepository(uri("https://github.com/mdklatt/idea-common.git")) {
         producesModule("dev.mdklatt:idea-common")
@@ -56,7 +56,7 @@ sourceControl {
 ```
 
 **build.gradle.kts**
-```kotlin
+``` kotlin
 dependencies {
     implementation("dev.mdklatt:idea-common") {
         version {
@@ -67,6 +67,24 @@ dependencies {
 }
 ```
 
+### JitPack
+
+The [JitPack service][7] can be used to build the library on demand from 
+GitHub. This allows a specific tag or commit ID to be requested instead of a
+branch.
+
+**build.gradle.kts**
+``` kotlin
+repositories {
+    maven("https://jitpack.io")
+}
+
+dependencies {
+    implementation("com.github.mdklatt:idea-common:<ref>")  // from JitPack
+}
+```
+
+
 ### Maven Package
 
 The goal is to use GitHub Packages to publish this library as Maven package.
@@ -74,7 +92,7 @@ Unfortunately, [authentication is required][6], even for public packages. At
 this time, only [installation from source](#source-dependency) is supported.
 
 **build.gradle.kts**
-```kotlin
+``` kotlin
 repositories { 
     mavenCentral()
     maven { 
@@ -94,3 +112,4 @@ dependencies {
 [4]: https://blog.gradle.org/introducing-source-dependencies
 [5]: https://img.shields.io/static/v1?label=IDEA&message=2022.1%2B&color=informational
 [6]: https://blog.gradle.org/introducing-source-dependencies
+[7]: https://jitpack.io/docs/#building-with-jitpack

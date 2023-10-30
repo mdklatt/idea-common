@@ -1,0 +1,4 @@
+# https://jitpack.io/docs/BUILDING
+# https://jitpack.io/com/github/mdklatt/idea-common/<ref>/build.log
+jdk:
+  - openjdk11

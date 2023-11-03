@@ -1,6 +1,6 @@
 plugins {
-    kotlin("jvm") version("1.7.10")
-    id("org.jetbrains.intellij") version("1.9.0")
+    kotlin("jvm") version("1.9.20")
+    id("org.jetbrains.intellij") version("1.16.0")
     id("java-library")
     id("maven-publish")
 }
@@ -16,14 +16,14 @@ dependencies {
     testImplementation(kotlin("test"))
 
     // JUnit3 is required for running IDEA platform tests.
-    testImplementation(platform("org.junit:junit-bom:5.9.0"))
+    testImplementation(platform("org.junit:junit-bom:5.10.0"))
     testRuntimeOnly("org.junit.vintage:junit-vintage-engine")
 }
 
 
 tasks {
     wrapper {
-        gradleVersion = "7.5.1"
+        gradleVersion = "8.4"
     }
 }
 

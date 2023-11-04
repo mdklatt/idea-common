@@ -203,11 +203,11 @@ internal class PosixCommandLineTest {
     )
 
     /**
-     * Test the and() companion method with a sequence of commands.
+     * Test the andCommands() companion method with a sequence of commands.
      */
     @Test
-    fun testAndSequence() {
-        val command = PosixCommandLine.and(sequenceOf(
+    fun testAndCommandsSequence() {
+        val command = PosixCommandLine.andCommands(sequenceOf(
             PosixCommandLine("true"),
             PosixCommandLine("false"),
         ))
@@ -215,11 +215,11 @@ internal class PosixCommandLineTest {
     }
 
     /**
-     * Test the and() companion method with variable arguments
+     * Test the andCommands() companion method with variable arguments
      */
     @Test
-    fun testAndVarArg() {
-        val command = PosixCommandLine.and(
+    fun testAndCommandsVarArg() {
+        val command = PosixCommandLine.andCommands(
             PosixCommandLine("true"),
             PosixCommandLine("false"),
         )

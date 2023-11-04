@@ -347,7 +347,7 @@ class PosixCommandLine() : CommandLineWithOptions() {
          * @param op operator, e.g. `&&`, `||`, or `;`
          * @return new command
          */
-        private fun concat(commands: Sequence<PosixCommandLine>, op: String): PosixCommandLine {
+        private fun concatCommands(commands: Sequence<PosixCommandLine>, op: String): PosixCommandLine {
             // Bare operators cannot be used as GeneralCommandLine arguments, so
             // the concatenated command itself has to be an argument.
             val compoundCommand = commands.map { it.commandLineString }.joinToString(" ${op.trim()} ")
@@ -363,7 +363,7 @@ class PosixCommandLine() : CommandLineWithOptions() {
          * @param commands sequence of commands to execute as a unit
          * @return new command
          */
-        fun and(commands: Sequence<PosixCommandLine>) = concat(commands, "&&")
+        fun andCommands(commands: Sequence<PosixCommandLine>) = concatCommands(commands, "&&")
 
         /**
          * AND one or commands into a single command.
@@ -374,7 +374,7 @@ class PosixCommandLine() : CommandLineWithOptions() {
          * @param command command(s) to execute as a unit
          * @return new command
          */
-        fun and(vararg command: PosixCommandLine) = concat(sequenceOf(*command), "&&")
+        fun andCommands(vararg command: PosixCommandLine) = concatCommands(sequenceOf(*command), "&&")
 
         /**
          * OR multiple commands into a single command.
@@ -385,7 +385,7 @@ class PosixCommandLine() : CommandLineWithOptions() {
          * @param commands sequence of commands to execute as a unit
          * @return new command
          */
-        fun or(commands: Sequence<PosixCommandLine>) = concat(commands, "||")
+        fun or(commands: Sequence<PosixCommandLine>) = concatCommands(commands, "||")
 
         /**
          * OR one or more commands into a single command.
@@ -396,7 +396,7 @@ class PosixCommandLine() : CommandLineWithOptions() {
          * @param command command(s) to execute as a unit
          * @return new command
          */
-        fun or(vararg command: PosixCommandLine) = concat(sequenceOf(*command), "||")
+        fun or(vararg command: PosixCommandLine) = concatCommands(sequenceOf(*command), "||")
 
         /**
          * Sequence multiple commands into a single command.
@@ -406,7 +406,7 @@ class PosixCommandLine() : CommandLineWithOptions() {
          * @param commands sequence of commands to execute as a unit
          * @return new command
          */
-        fun seq(commands: Sequence<PosixCommandLine>) = concat(commands, ";")
+        fun seq(commands: Sequence<PosixCommandLine>) = concatCommands(commands, ";")
 
         /**
          * Sequence one or more commands into a single command.
@@ -416,7 +416,7 @@ class PosixCommandLine() : CommandLineWithOptions() {
          * @param command command(s) to execute as a unit
          * @return new command
          */
-        fun seq(vararg command: PosixCommandLine) = concat(sequenceOf(*command), ";")
+        fun seq(vararg command: PosixCommandLine) = concatCommands(sequenceOf(*command), ";")
     }
 }
 

@@ -460,6 +460,7 @@ class WindowsCommandLine() : CommandLineWithOptions() {
 
     companion object {
         private val andOperator = "&&"
+        private val orOperator = "||"
 
         /**
          * Concatenate multiple commands.
@@ -485,11 +486,32 @@ class WindowsCommandLine() : CommandLineWithOptions() {
          * @param commands sequence of commands to execute as a unit
          * @return new command
          */
-        fun andCommands(commands: Sequence<WindowsCommandLine>) = concatCommands(commands, andOperator)
+        fun andCommands(commands: Sequence<WindowsCommandLine>) =
+            concatCommands(commands, andOperator)
 
         /**
          * @overload
          */
-        fun andCommands(vararg command: WindowsCommandLine) = concatCommands(sequenceOf(*command), andOperator)
+        fun andCommands(vararg command: WindowsCommandLine) =
+            concatCommands(sequenceOf(*command), andOperator)
+
+        /**
+         * Combine multiple commands for conditional OR execution.
+         *
+         * Commands will be executed in order until one exits with a success
+         * status. This status will be the return status of the combined
+         * command.
+         *
+         * @param commands sequence of commands to execute as a unit
+         * @return new command
+         */
+        fun orCommands(commands: Sequence<WindowsCommandLine>) =
+            concatCommands(commands, orOperator)
+
+        /**
+         * @overload
+         */
+        fun orCommands(vararg command: WindowsCommandLine) =
+            concatCommands(sequenceOf(*command), orOperator)
     }
 }

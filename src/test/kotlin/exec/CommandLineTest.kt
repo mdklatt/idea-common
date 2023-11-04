@@ -461,4 +461,28 @@ internal class WindowsCommandLineTest {
         )
         assertEquals("cmd /c \"true && false\"", command.commandLineString)
     }
+
+    /**
+     * Test the orCommands() companion method with a sequence of commands.
+     */
+    @Test
+    fun testOrCommandsSequence() {
+        val command = WindowsCommandLine.orCommands(sequenceOf(
+            WindowsCommandLine("false"),
+            WindowsCommandLine("true"),
+        ))
+        assertEquals("cmd /c \"false || true\"", command.commandLineString)
+    }
+
+    /**
+     * Test the orCommands() companion method with variable arguments
+     */
+    @Test
+    fun testOrCommandsVarArg() {
+        val command = WindowsCommandLine.orCommands(
+            WindowsCommandLine("false"),
+            WindowsCommandLine("true"),
+        )
+        assertEquals("cmd /c \"false || true\"", command.commandLineString)
+    }
 }

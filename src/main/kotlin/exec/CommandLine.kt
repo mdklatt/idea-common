@@ -368,12 +368,14 @@ class PosixCommandLine() : CommandLineWithOptions() {
          * @param commands sequence of commands to execute as a unit
          * @return new command
          */
-        fun andCommands(commands: Sequence<PosixCommandLine>) = concatCommands(commands, andOperator)
+        fun andCommands(commands: Sequence<PosixCommandLine>) = 
+            concatCommands(commands, andOperator)
 
         /**
          * @overload
          */
-        fun andCommands(vararg command: PosixCommandLine) = concatCommands(sequenceOf(*command), andOperator)
+        fun andCommands(vararg command: PosixCommandLine) = 
+            concatCommands(sequenceOf(*command), andOperator)
 
         /**
          * Combine multiple commands for conditional OR execution.
@@ -385,12 +387,14 @@ class PosixCommandLine() : CommandLineWithOptions() {
          * @param commands sequence of commands to execute as a unit
          * @return new command
          */
-        fun orCommands(commands: Sequence<PosixCommandLine>) = concatCommands(commands, orOperator)
+        fun orCommands(commands: Sequence<PosixCommandLine>) = 
+            concatCommands(commands, orOperator)
 
         /**
          * @overload
          */
-        fun orCommands(vararg command: PosixCommandLine) = concatCommands(sequenceOf(*command), orOperator)
+        fun orCommands(vararg command: PosixCommandLine) = 
+            concatCommands(sequenceOf(*command), orOperator)
 
         /**
          * Sequence multiple commands into a single command.
@@ -400,12 +404,14 @@ class PosixCommandLine() : CommandLineWithOptions() {
          * @param commands sequence of commands to execute as a unit
          * @return new command
          */
-        fun chainCommands(commands: Sequence<PosixCommandLine>) = concatCommands(commands, chainOperator)
+        fun chainCommands(commands: Sequence<PosixCommandLine>) = 
+            concatCommands(commands, chainOperator)
 
         /**
          * @overload
          */
-        fun chainCommands(vararg command: PosixCommandLine) = concatCommands(sequenceOf(*command), chainOperator)
+        fun chainCommands(vararg command: PosixCommandLine) = 
+            concatCommands(sequenceOf(*command), chainOperator)
     }
 }
 
@@ -461,6 +467,7 @@ class WindowsCommandLine() : CommandLineWithOptions() {
     companion object {
         private val andOperator = "&&"
         private val orOperator = "||"
+        private val chainOperator = "&"
 
         /**
          * Concatenate multiple commands.
@@ -513,5 +520,22 @@ class WindowsCommandLine() : CommandLineWithOptions() {
          */
         fun orCommands(vararg command: WindowsCommandLine) =
             concatCommands(sequenceOf(*command), orOperator)
+
+        /**
+         * Sequence multiple commands into a single command.
+         *
+         * Commands will be executed in order regardless of exit status.
+         *
+         * @param commands sequence of commands to execute as a unit
+         * @return new command
+         */
+        fun chainCommands(commands: Sequence<WindowsCommandLine>) =
+            concatCommands(commands, chainOperator)
+
+        /**
+         * @overload
+         */
+        fun chainCommands(vararg command: WindowsCommandLine) =
+            concatCommands(sequenceOf(*command), chainOperator)
     }
 }

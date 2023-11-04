@@ -485,4 +485,27 @@ internal class WindowsCommandLineTest {
         )
         assertEquals("cmd /c \"false || true\"", command.commandLineString)
     }
+    /**
+     * Test the chainCommands() companion method with a sequence of commands.
+     */
+    @Test
+    fun testChainCommandsSequence() {
+        val command = WindowsCommandLine.chainCommands(sequenceOf(
+            WindowsCommandLine("false"),
+            WindowsCommandLine("false"),
+        ))
+        assertEquals("cmd /c \"false & false\"", command.commandLineString)
+    }
+
+    /**
+     * Test the chainCommands() companion method with variable arguments
+     */
+    @Test
+    fun testChainCommandsVarArg() {
+        val command = WindowsCommandLine.chainCommands(
+            WindowsCommandLine("false"),
+            WindowsCommandLine("false"),
+        )
+        assertEquals("cmd /c \"false & false\"", command.commandLineString)
+    }
 }

@@ -203,78 +203,6 @@ internal class PosixCommandLineTest {
     )
 
     /**
-     * Test the andCommands() companion method with a sequence of commands.
-     */
-    @Test
-    fun testAndCommandsSequence() {
-        val command = PosixCommandLine.andCommands(sequenceOf(
-            PosixCommandLine("true"),
-            PosixCommandLine("false"),
-        ))
-        assertEquals("sh -c \"true && false\"", command.commandLineString)
-    }
-
-    /**
-     * Test the andCommands() companion method with variable arguments
-     */
-    @Test
-    fun testAndCommandsVarArg() {
-        val command = PosixCommandLine.andCommands(
-            PosixCommandLine("true"),
-            PosixCommandLine("false"),
-        )
-        assertEquals("sh -c \"true && false\"", command.commandLineString)
-    }
-
-    /**
-     * Test the orCommands() companion method with a sequence of commands.
-     */
-    @Test
-    fun testOrCommandsSequence() {
-        val command = PosixCommandLine.orCommands(sequenceOf(
-            PosixCommandLine("false"),
-            PosixCommandLine("true"),
-        ))
-        assertEquals("sh -c \"false || true\"", command.commandLineString)
-    }
-
-    /**
-     * Test the orCommands() companion method with variable arguments
-     */
-    @Test
-    fun testOrCommandsVarArg() {
-        val command = PosixCommandLine.orCommands(
-            PosixCommandLine("false"),
-            PosixCommandLine("true"),
-        )
-        assertEquals("sh -c \"false || true\"", command.commandLineString)
-    }
-
-    /**
-     * Test the chainCommands() companion method with a sequence of commands.
-     */
-    @Test
-    fun testChainCommandsSequence() {
-        val command = PosixCommandLine.chainCommands(sequenceOf(
-            PosixCommandLine("false"),
-            PosixCommandLine("false"),
-        ))
-        assertEquals("sh -c \"false ; false\"", command.commandLineString)
-    }
-
-    /**
-     * Test the chainCommands() companion method with variable arguments
-     */
-    @Test
-    fun testChainCommandsVarArg() {
-        val command = PosixCommandLine.chainCommands(
-            PosixCommandLine("false"),
-            PosixCommandLine("false"),
-        )
-        assertEquals("sh -c \"false ; false\"", command.commandLineString)
-    }
-
-    /**
      * Test the primary constructor.
      */
     @Test
@@ -345,6 +273,78 @@ internal class PosixCommandLineTest {
             "cat --on --blank \"\" --value 1 --list a --list b -s short",
             classUnderTest.commandLineString
         )
+    }
+
+    /**
+     * Test the andCommands() companion method with a sequence of commands.
+     */
+    @Test
+    fun testAndCommandsSequence() {
+        val command = PosixCommandLine.andCommands(sequenceOf(
+            PosixCommandLine("true"),
+            PosixCommandLine("false"),
+        ))
+        assertEquals("sh -c \"true && false\"", command.commandLineString)
+    }
+
+    /**
+     * Test the andCommands() companion method with variable arguments
+     */
+    @Test
+    fun testAndCommandsVarArg() {
+        val command = PosixCommandLine.andCommands(
+            PosixCommandLine("true"),
+            PosixCommandLine("false"),
+        )
+        assertEquals("sh -c \"true && false\"", command.commandLineString)
+    }
+
+    /**
+     * Test the orCommands() companion method with a sequence of commands.
+     */
+    @Test
+    fun testOrCommandsSequence() {
+        val command = PosixCommandLine.orCommands(sequenceOf(
+            PosixCommandLine("false"),
+            PosixCommandLine("true"),
+        ))
+        assertEquals("sh -c \"false || true\"", command.commandLineString)
+    }
+
+    /**
+     * Test the orCommands() companion method with variable arguments
+     */
+    @Test
+    fun testOrCommandsVarArg() {
+        val command = PosixCommandLine.orCommands(
+            PosixCommandLine("false"),
+            PosixCommandLine("true"),
+        )
+        assertEquals("sh -c \"false || true\"", command.commandLineString)
+    }
+
+    /**
+     * Test the chainCommands() companion method with a sequence of commands.
+     */
+    @Test
+    fun testChainCommandsSequence() {
+        val command = PosixCommandLine.chainCommands(sequenceOf(
+            PosixCommandLine("false"),
+            PosixCommandLine("false"),
+        ))
+        assertEquals("sh -c \"false ; false\"", command.commandLineString)
+    }
+
+    /**
+     * Test the chainCommands() companion method with variable arguments
+     */
+    @Test
+    fun testChainCommandsVarArg() {
+        val command = PosixCommandLine.chainCommands(
+            PosixCommandLine("false"),
+            PosixCommandLine("false"),
+        )
+        assertEquals("sh -c \"false ; false\"", command.commandLineString)
     }
 }
 
@@ -436,5 +436,29 @@ internal class WindowsCommandLineTest {
             "cat /on /blank: /value:1 /list:a /list:b",
             classUnderTest.commandLineString
         )
+    }
+
+    /**
+     * Test the andCommands() companion method with a sequence of commands.
+     */
+    @Test
+    fun testAndCommandsSequence() {
+        val command = WindowsCommandLine.andCommands(sequenceOf(
+            WindowsCommandLine("true"),
+            WindowsCommandLine("false"),
+        ))
+        assertEquals("cmd /c \"true && false\"", command.commandLineString)
+    }
+
+    /**
+     * Test the andCommands() companion method with variable arguments
+     */
+    @Test
+    fun testAndCommandsVarArg() {
+        val command = WindowsCommandLine.andCommands(
+            WindowsCommandLine("true"),
+            WindowsCommandLine("false"),
+        )
+        assertEquals("cmd /c \"true && false\"", command.commandLineString)
     }
 }

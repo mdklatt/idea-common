@@ -340,63 +340,57 @@ class PosixCommandLine() : CommandLineWithOptions() {
     }
 
     companion object {
+        private val andOperator = "&&"
+        private val orOperator = "||"
+        private val chainOperator = ";"
+
         /**
          * Concatenate multiple commands.
          *
          * @param commands sequence of commands to execute as a unit
-         * @param op operator, e.g. `&&`, `||`, or `;`
+         * @param operator shell operator
          * @return new command
          */
-        private fun concatCommands(commands: Sequence<PosixCommandLine>, op: String): PosixCommandLine {
+        private fun concatCommands(commands: Sequence<PosixCommandLine>, operator: String): PosixCommandLine {
             // Bare operators cannot be used as GeneralCommandLine arguments, so
             // the concatenated command itself has to be an argument.
-            val compoundCommand = commands.map { it.commandLineString }.joinToString(" ${op.trim()} ")
+            val compoundCommand = commands.map { it.commandLineString }.joinToString(" ${operator.trim()} ")
             return PosixCommandLine("sh", "-c", compoundCommand)
         }
 
         /**
-         * AND multiple commands into a single command.
+         * Combine multiple commands for conditional AND execution.
          *
          * Commands will be executed in order until one exits with a failure
-         * status.
+         * status. This status will be the return status of the combined
+         * command.
          *
          * @param commands sequence of commands to execute as a unit
          * @return new command
          */
-        fun andCommands(commands: Sequence<PosixCommandLine>) = concatCommands(commands, "&&")
+        fun andCommands(commands: Sequence<PosixCommandLine>) = concatCommands(commands, andOperator)
 
         /**
-         * AND one or more commands into a single command.
-         *
-         * Commands will be executed in order until one exits with a failure
-         * status.
-         *
-         * @param command command(s) to execute as a unit
-         * @return new command
+         * @overload
          */
-        fun andCommands(vararg command: PosixCommandLine) = concatCommands(sequenceOf(*command), "&&")
+        fun andCommands(vararg command: PosixCommandLine) = concatCommands(sequenceOf(*command), andOperator)
 
         /**
-         * OR multiple commands into a single command.
+         * Combine multiple commands for conditional OR execution.
          *
          * Commands will be executed in order until one exits with a success
-         * status.
+         * status. This status will be the return status of the combined
+         * command.
          *
          * @param commands sequence of commands to execute as a unit
          * @return new command
          */
-        fun orCommands(commands: Sequence<PosixCommandLine>) = concatCommands(commands, "||")
+        fun orCommands(commands: Sequence<PosixCommandLine>) = concatCommands(commands, orOperator)
 
         /**
-         * OR one or more commands into a single command.
-         *
-         * Commands will be executed in order until one exits with a success
-         * status.
-         *
-         * @param command command(s) to execute as a unit
-         * @return new command
+         * @overload
          */
-        fun orCommands(vararg command: PosixCommandLine) = concatCommands(sequenceOf(*command), "||")
+        fun orCommands(vararg command: PosixCommandLine) = concatCommands(sequenceOf(*command), orOperator)
 
         /**
          * Sequence multiple commands into a single command.
@@ -406,17 +400,12 @@ class PosixCommandLine() : CommandLineWithOptions() {
          * @param commands sequence of commands to execute as a unit
          * @return new command
          */
-        fun chainCommands(commands: Sequence<PosixCommandLine>) = concatCommands(commands, ";")
+        fun chainCommands(commands: Sequence<PosixCommandLine>) = concatCommands(commands, chainOperator)
 
         /**
-         * Sequence one or more commands into a single command.
-         *
-         * Commands will be executed in order regardless of exit status.
-         *
-         * @param command command(s) to execute as a unit
-         * @return new command
+         * @overload
          */
-        fun chainCommands(vararg command: PosixCommandLine) = concatCommands(sequenceOf(*command), ";")
+        fun chainCommands(vararg command: PosixCommandLine) = concatCommands(sequenceOf(*command), chainOperator)
     }
 }
 
@@ -467,5 +456,40 @@ class WindowsCommandLine() : CommandLineWithOptions() {
                 yield(parameter)
             }
         }
+    }
+
+    companion object {
+        private val andOperator = "&&"
+
+        /**
+         * Concatenate multiple commands.
+         *
+         * @param commands sequence of commands to execute as a unit
+         * @param operator shell operator
+         * @return new command
+         */
+        private fun concatCommands(commands: Sequence<WindowsCommandLine>, operator: String): WindowsCommandLine {
+            // Bare operators cannot be used as GeneralCommandLine arguments, so
+            // the concatenated command itself has to be an argument.
+            val compoundCommand = commands.map { it.commandLineString }.joinToString(" ${operator.trim()} ")
+            return WindowsCommandLine("cmd", "/c", compoundCommand)
+        }
+
+        /**
+         * Combine multiple commands for conditional AND execution.
+         *
+         * Commands will be executed in order until one exits with a failure
+         * status. This status will be the return status of the combined
+         * command.
+         *
+         * @param commands sequence of commands to execute as a unit
+         * @return new command
+         */
+        fun andCommands(commands: Sequence<WindowsCommandLine>) = concatCommands(commands, andOperator)
+
+        /**
+         * @overload
+         */
+        fun andCommands(vararg command: WindowsCommandLine) = concatCommands(sequenceOf(*command), andOperator)
     }
 }

@@ -188,8 +188,6 @@ open class CommandLine() : GeneralCommandLine() {
     }
 
     companion object {
-        // TODO: Should these be free functions?
-
         /**
          * Join command line arguments using shell syntax.
          *
@@ -215,7 +213,7 @@ open class CommandLine() : GeneralCommandLine() {
          * @param command: command to split
          * @return: sequence of arguments
          */
-        fun split(command: String): List<String> = ParametersListUtil.parse(command)
+        fun splitArguments(command: String): List<String> = ParametersListUtil.parse(command)
     }
 }
 

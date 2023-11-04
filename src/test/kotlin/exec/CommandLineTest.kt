@@ -174,14 +174,14 @@ internal class CommandLineTest {
     }
 
     /**
-     * Test the split() method.
+     * Test the splitArguments() method.
      */
     @Test
-    fun testSplit() {
-        assertEquals(emptyList(), CommandLine.split(""))
+    fun testSplitArguments() {
+        assertEquals(emptyList(), CommandLine.splitArguments(""))
         val command = "one\t\n\r \" two  \\\"three\\\"\""
         val argv = listOf("one", " two  \"three\"")
-        assertEquals(argv, CommandLine.split(command))
+        assertEquals(argv, CommandLine.splitArguments(command))
     }
 }
 

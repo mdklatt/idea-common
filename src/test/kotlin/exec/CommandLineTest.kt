@@ -227,11 +227,11 @@ internal class PosixCommandLineTest {
     }
 
     /**
-     * Test the or() companion method with a sequence of commands.
+     * Test the orCommands() companion method with a sequence of commands.
      */
     @Test
-    fun testOrSequence() {
-        val command = PosixCommandLine.or(sequenceOf(
+    fun testOrCommandsSequence() {
+        val command = PosixCommandLine.orCommands(sequenceOf(
             PosixCommandLine("false"),
             PosixCommandLine("true"),
         ))
@@ -239,11 +239,11 @@ internal class PosixCommandLineTest {
     }
 
     /**
-     * Test the or() companion method with variable arguments
+     * Test the orCommands() companion method with variable arguments
      */
     @Test
-    fun testOrVarArg() {
-        val command = PosixCommandLine.or(
+    fun testOrCommandsVarArg() {
+        val command = PosixCommandLine.orCommands(
             PosixCommandLine("false"),
             PosixCommandLine("true"),
         )

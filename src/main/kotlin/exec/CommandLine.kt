@@ -366,7 +366,7 @@ class PosixCommandLine() : CommandLineWithOptions() {
         fun andCommands(commands: Sequence<PosixCommandLine>) = concatCommands(commands, "&&")
 
         /**
-         * AND one or commands into a single command.
+         * AND one or more commands into a single command.
          *
          * Commands will be executed in order until one exits with a failure
          * status.
@@ -385,7 +385,7 @@ class PosixCommandLine() : CommandLineWithOptions() {
          * @param commands sequence of commands to execute as a unit
          * @return new command
          */
-        fun or(commands: Sequence<PosixCommandLine>) = concatCommands(commands, "||")
+        fun orCommands(commands: Sequence<PosixCommandLine>) = concatCommands(commands, "||")
 
         /**
          * OR one or more commands into a single command.
@@ -396,7 +396,7 @@ class PosixCommandLine() : CommandLineWithOptions() {
          * @param command command(s) to execute as a unit
          * @return new command
          */
-        fun or(vararg command: PosixCommandLine) = concatCommands(sequenceOf(*command), "||")
+        fun orCommands(vararg command: PosixCommandLine) = concatCommands(sequenceOf(*command), "||")
 
         /**
          * Sequence multiple commands into a single command.

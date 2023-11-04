@@ -198,7 +198,7 @@ open class CommandLine() : GeneralCommandLine() {
          * {@link import com.intellij.ui.RawCommandLineEditor} class.
          *
          */
-        fun join(argv: List<String>) = ParametersListUtil.join(argv)
+        fun joinArguments(argv: List<String>) = ParametersListUtil.join(argv)
 
         /**
          * Split command line arguments using shell syntax.

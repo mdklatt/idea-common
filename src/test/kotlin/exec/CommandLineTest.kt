@@ -163,14 +163,14 @@ internal class CommandLineTest {
     }
 
     /**
-     * Test the join() method.
+     * Test the joinArguments() method.
      */
     @Test
-    fun testJoin() {
-        assertEquals("", CommandLine.join(emptyList()))
+    fun testJoinArguments() {
+        assertEquals("", CommandLine.joinArguments(emptyList()))
         val argv = listOf("one", " two  \"three\"")
         val command = "one \" two  \\\"three\\\"\""
-        assertEquals(command, CommandLine.join(argv))
+        assertEquals(command, CommandLine.joinArguments(argv))
     }
 
     /**

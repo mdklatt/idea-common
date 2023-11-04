@@ -32,7 +32,7 @@ internal class CommandLineTest {
      * Test the secondary Sequence constructor.
      */
     @Test
-    fun testSequenceConstructor() {
+    fun testChainCommandsuenceConstructor() {
         assertEquals(
             command,
             CommandLine("cat", sequenceOf("--on", "one", 2)).commandLineString
@@ -251,11 +251,11 @@ internal class PosixCommandLineTest {
     }
 
     /**
-     * Test the seq() companion method with a sequence of commands.
+     * Test the chainCommands() companion method with a sequence of commands.
      */
     @Test
-    fun testSeqSequence() {
-        val command = PosixCommandLine.seq(sequenceOf(
+    fun testChainCommandsSequence() {
+        val command = PosixCommandLine.chainCommands(sequenceOf(
             PosixCommandLine("false"),
             PosixCommandLine("false"),
         ))
@@ -263,11 +263,11 @@ internal class PosixCommandLineTest {
     }
 
     /**
-     * Test the seq() companion method with variable arguments
+     * Test the chainCommands() companion method with variable arguments
      */
     @Test
-    fun testSeqVarArg() {
-        val command = PosixCommandLine.seq(
+    fun testChainCommandsVarArg() {
+        val command = PosixCommandLine.chainCommands(
             PosixCommandLine("false"),
             PosixCommandLine("false"),
         )

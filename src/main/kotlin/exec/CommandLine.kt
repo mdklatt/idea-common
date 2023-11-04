@@ -406,7 +406,7 @@ class PosixCommandLine() : CommandLineWithOptions() {
          * @param commands sequence of commands to execute as a unit
          * @return new command
          */
-        fun seq(commands: Sequence<PosixCommandLine>) = concatCommands(commands, ";")
+        fun chainCommands(commands: Sequence<PosixCommandLine>) = concatCommands(commands, ";")
 
         /**
          * Sequence one or more commands into a single command.
@@ -416,7 +416,7 @@ class PosixCommandLine() : CommandLineWithOptions() {
          * @param command command(s) to execute as a unit
          * @return new command
          */
-        fun seq(vararg command: PosixCommandLine) = concatCommands(sequenceOf(*command), ";")
+        fun chainCommands(vararg command: PosixCommandLine) = concatCommands(sequenceOf(*command), ";")
     }
 }
 

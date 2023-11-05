@@ -110,6 +110,6 @@ dependencies {
 [2]: https://github.com/mdklatt/idea-common/actions/workflows/test.yml
 [3]: https://plugins.jetbrains.com/docs/intellij/welcome.html
 [4]: https://blog.gradle.org/introducing-source-dependencies
-[5]: https://img.shields.io/static/v1?label=IDEA&message=2022.1%2B&color=informational
+[5]: https://img.shields.io/static/v1?label=IDEA&message=2023.1%2B&color=informational
 [6]: https://blog.gradle.org/introducing-source-dependencies
 [7]: https://jitpack.io/docs/#building-with-jitpack
